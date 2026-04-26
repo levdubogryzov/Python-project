@@ -44,7 +44,7 @@ def run_graph_test(algo_name: str, algo_instance: BaseAlgorithm) -> None:
 
 def main() -> None:
     """Точка входа для демонстрации работы ядра."""
-    test_data: List[int] = [64, 34, 25, 12, 22, 11, 90, 4, 5, 2, 1]
+    test_data: List[int] = [64, 34, 25, 12, 22, 11, 90, 4, 5, 2, 0]
 
     run_validation("ShellSort", ShellSort(test_data.copy()))
     run_validation("QuickSort", QuickSort(test_data.copy()))
