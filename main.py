@@ -59,8 +59,8 @@ def run_graph_test(
 
 
 def main() -> None:
-    test_data: List[int] = [64, 34, 25, 12, 22, 11, 90, 4, 5, 2, 1]
-
+    """Точка входа для демонстрации работы ядра."""
+    test_data: List[int] = [64, 34, 25, 12, 22, 11, 90, 4, 5, 2, 0]
     run_validation("ShellSort", ShellSort(test_data.copy()), test_data.copy())
     run_validation("QuickSort", QuickSort(test_data.copy()), test_data.copy())
     run_validation("MergeSort", MergeSort(test_data.copy()), test_data.copy())
