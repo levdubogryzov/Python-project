@@ -1,5 +1,5 @@
 from .exceptions import AlgorithmError, InvalidInputError, EventProtocolError
-from .events import EventType, AlgorithmEvent, EventEmitterProtocol
+from .events import EventType, AlgorithmEvent
 
 __all__ = [
     "AlgorithmError",
@@ -7,5 +7,4 @@ __all__ = [
     "EventProtocolError",
     "EventType",
     "AlgorithmEvent",
-    "EventEmitterProtocol",
 ]

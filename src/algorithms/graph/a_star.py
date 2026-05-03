@@ -1,52 +1,110 @@
-from typing import Generator, List, Tuple, Callable, Set
+from typing import List, Tuple, Dict, Generator, Set, Optional, Callable
 import heapq
 from src.algorithms.base import BaseAlgorithm
-from src.core.events import EventType, AlgorithmEvent
+from src.core.events import AlgorithmEvent, EventType
+from src.core.exceptions import InvalidInputError
 
 
 class AStar(BaseAlgorithm):
-    """Алгоритм A* для поиска кратчайших путей с эвристикой."""
+    def __init__(
+            self,
+            graph: List[List[Tuple[int, float]]],
+            start: int = 0,
+            end: Optional[int] = None,
+            heuristic: Optional[Callable[[int, int], float]] = None,
+    ) -> None:
+        vertices = list(range(len(graph)))
+        super().__init__(vertices)
 
-    _is_completed: bool
+        self._graph = graph
+        self._start = start
+        self._end = end if end is not None else len(graph) - 1
+        self._heuristic = heuristic or (lambda x, y: 0)
+        self._distances: Dict[int, float] = {}
+        self._validate_astar_input()
 
-    def __init__(self, adj: List[List[Tuple[int, float]]], start: int = 0, end: int = -1,
-                 heuristic: Callable[[int, int], float] = lambda u, v: 0.0) -> None:
-        n = len(adj)
-        super().__init__(list(range(n)))
-        self._adj: List[List[Tuple[int, float]]] = adj
-        self._start: int = start
-        self._end: int = n - 1 if end == -1 else end
-        self._heuristic: Callable[[int, int], float] = heuristic
-        self._dist: List[float] = [float('inf')] * n
-        self._dist[start] = 0.0
-        self._f_score: List[float] = [float('inf')] * n
-        self._f_score[start] = self._heuristic(start, self._end)
+    def _validate_astar_input(self) -> None:
+        if not self._graph:
+            raise InvalidInputError("Граф пуст")
+        n = len(self._graph)
+        if self._start < 0 or self._start >= n:
+            raise InvalidInputError(f"Вершина {self._start} вне диапазона")
+        if self._end < 0 or self._end >= n:
+            raise InvalidInputError(f"Вершина {self._end} вне диапазона")
+
+        for u, neighbors in enumerate(self._graph):
+            for v, weight in neighbors:
+                if weight < 0:
+                    raise InvalidInputError(f"Отрицательный вес ребра {u}->{v}. Используйте Bellman-Ford.")
+                if v < 0 or v >= n:
+                    raise InvalidInputError(f"Некорректная вершина {v}")
+
+    @property
+    def distances(self) -> Dict[int, float]:
+        return self._distances.copy()
 
     def run(self) -> Generator[AlgorithmEvent, None, None]:
-        n = len(self._adj)
-        open_set = [(self._f_score[self._start], self._start)]
-        in_open_set: Set[int] = {self._start}
+        n = len(self._graph)
+        self._distances = {i: float('inf') for i in range(n)}
+        self._distances[self._start] = 0
 
-        while open_set:
-            _, u = heapq.heappop(open_set)
-            in_open_set.discard(u)
+        g_score: Dict[int, float] = {self._start: 0}
+        visited: Set[int] = set()
+        pq: List[Tuple[float, int]] = [(0, self._start)]
+
+        yield self._emit(
+            EventType.VISIT,
+            [self._start],
+            value=0,
+            description=f"Старт из вершины {self._start}",
+        )
+
+        while pq:
+            f, u = heapq.heappop(pq)
+
+            if u in visited:
+                continue
+
+            visited.add(u)
+            self._distances[u] = g_score[u]
+
+            h = self._heuristic(u, self._end)
+            yield self._emit(
+                EventType.HEURISTIC,
+                [u],
+                value=h,
+                description=f"Эвристика h({u}) = {h}",
+            )
 
             if u == self._end:
+                yield self._emit(
+                    EventType.FOUND,
+                    [u],
+                    value=self._distances[u],
+                    description=f"Цель достигнута: вершина {self._end}",
+                )
                 break
 
-            yield self._emit(EventType.NODE_VISITED, (u,), (self._dist[u],))
+            for v, weight in self._graph[u]:
+                if v in visited:
+                    continue
 
-            for v, weight in self._adj[u]:
-                yield self._emit(EventType.ACCESS, (v,), (self._dist[v],))
-                new_dist = self._dist[u] + weight
-                yield self._emit(EventType.COMPARE, (u, v), (new_dist, self._dist[v]))
-                if new_dist < self._dist[v]:
-                    self._dist[v] = new_dist
-                    self._f_score[v] = new_dist + self._heuristic(v, self._end)
-                    yield self._emit(EventType.PATH_UPDATED, (v,), (self._dist[v],))
-                    if v not in in_open_set:
-                        heapq.heappush(open_set, (self._f_score[v], v))
-                        in_open_set.add(v)
+                yield self._emit(
+                    EventType.COMPARE,
+                    [u, v],
+                    value=weight,
+                    description=f"Ребро {u}->{v}, вес {weight}",
+                )
 
-        self._is_completed = True
-        yield self._emit(EventType.STATE_CHANGE, tuple(range(n)), tuple(self._dist), status="completed")
+                new_g = g_score[u] + weight
+                if new_g < g_score.get(v, float('inf')):
+                    g_score[v] = new_g
+                    f_score = new_g + self._heuristic(v, self._end)
+
+                    yield self._emit(
+                        EventType.RELAX,
+                        [u, v],
+                        value=new_g,
+                        description=f"Релаксация {u}->{v}: g={new_g}",
+                    )
+                    heapq.heappush(pq, (f_score, v))
