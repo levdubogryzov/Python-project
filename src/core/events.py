@@ -1,29 +1,29 @@
-from __future__ import annotations
-from dataclasses import dataclass, field
-from enum import Enum, auto
-from typing import Any, Protocol, Tuple
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any, Optional, List
 
 
 class EventType(Enum):
-    """Перечисление типов алгоритмических событий."""
-    COMPARE = auto()
-    SWAP = auto()
-    ACCESS = auto()
-    OVERWRITE = auto()
-    STATE_CHANGE = auto()
-    NODE_VISITED = auto()
-    PATH_UPDATED = auto()
+    COMPARE = "compare"
+    SWAP = "swap"
+    ACCESS = "access"
+    OVERWRITE = "overwrite"
+    STATE_CHANGE = "state_change"
+    VISIT = "visit"
+    UPDATE = "update"
+    RELAX = "relax"
+    HEURISTIC = "heuristic"
+    NEGATIVE_CYCLE = "negative_cycle"
+    FOUND = "found"
+    PARTITION = "partition"
+    MERGE = "merge"
+    SPLIT = "split"
 
 
-@dataclass(frozen=True)
+@dataclass
 class AlgorithmEvent:
-    """Атомарное событие алгоритма."""
     event_type: EventType
-    indices: Tuple[int, ...]
-    values: Tuple[Any, ...]
-    metadata: dict[str, Any] = field(default_factory=dict)
-
-
-class EventEmitterProtocol(Protocol):
-    """Протокол для объектов, способных эмиттить события."""
-    def emit(self, event: AlgorithmEvent) -> None: ...
+    indices: List[int]
+    value: Optional[Any] = None
+    description: str = ""
+    timestamp: float = 0.0

@@ -1,5 +1,15 @@
 class AlgorithmError(Exception):
-    """Базовое исключение алгоритмов."""
+    """Базовое исключение для ошибок алгоритмов."""
+    pass
+
+
+class EventProtocolError(AlgorithmError):
+    """Ошибка протокола событий."""
+    pass
+
+
+class ValidationError(AlgorithmError):
+    """Ошибка валидации данных или результатов."""
     pass
 
 
@@ -8,6 +18,11 @@ class InvalidInputError(AlgorithmError):
     pass
 
 
-class EventProtocolError(AlgorithmError):
-    """Ошибка нарушения протокола событий."""
+class NegativeCycleError(AlgorithmError):
+    """Ошибка обнаружения отрицательного цикла в графе."""
+    pass
+
+
+class ReplayError(AlgorithmError):
+    """Ошибка воспроизведения сценария."""
     pass
