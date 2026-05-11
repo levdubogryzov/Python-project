@@ -1,11 +1,7 @@
-"""Pydantic-схемы для сериализации событий алгоритма в JSON."""
-
 from __future__ import annotations
-
 from typing import Any, List, Optional
 from pydantic import BaseModel, ConfigDict, Field
-
-from src.core.events import EventType
+from src.core.events import EventType, AlgorithmEvent
 
 
 class EventRecord(BaseModel):
@@ -20,10 +16,8 @@ class EventRecord(BaseModel):
     description: str = ""
     timestamp: float = Field(default=0.0, ge=0.0)
 
-    def to_event(self) -> "AlgorithmEvent":
-        """Конвертирует запись в dataclass AlgorithmEvent."""
-        from src.core.events import AlgorithmEvent
-
+    def to_event(self) -> AlgorithmEvent:
+        """Конвертирует запись в объект AlgorithmEvent."""
         return AlgorithmEvent(
             event_type=self.event_type,
             indices=self.indices,

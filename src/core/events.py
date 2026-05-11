@@ -1,6 +1,7 @@
-from dataclasses import dataclass
+from __future__ import annotations
 from enum import Enum
-from typing import Any, Optional, List
+from typing import Any
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class EventType(Enum):
@@ -18,12 +19,17 @@ class EventType(Enum):
     PARTITION = "partition"
     MERGE = "merge"
     SPLIT = "split"
+    PIVOT = "pivot"
 
 
-@dataclass
-class AlgorithmEvent:
-    event_type: EventType
-    indices: List[int]
-    value: Optional[Any] = None
+class AlgorithmEvent(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    type: EventType = Field(alias="event_type")
+    indices: list[int] = Field(default_factory=list)
+    value: Any | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
     description: str = ""
-    timestamp: float = 0.0
+
+    def __repr__(self) -> str:
+        return f"<{self.type.value.upper()} indices={self.indices}>"
