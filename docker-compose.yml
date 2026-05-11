@@ -1,0 +1,12 @@
+services:
+  visualizer:
+    build: .
+    container_name: algo_visualizer
+    volumes:
+      - ./media:/app/media
+      - ./data:/app/data
+      - ./profiling:/app/profiling
+    stdin_open: true
+    tty: true
+    environment:
+      - QT_QPA_PLATFORM=offscreen
