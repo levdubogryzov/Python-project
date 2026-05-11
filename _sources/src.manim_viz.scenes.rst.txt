@@ -1,0 +1,29 @@
+src.manim\_viz.scenes package
+=============================
+
+Submodules
+----------
+
+src.manim\_viz.scenes.graph module
+----------------------------------
+
+.. automodule:: src.manim_viz.scenes.graph
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+src.manim\_viz.scenes.sorting module
+------------------------------------
+
+.. automodule:: src.manim_viz.scenes.sorting
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: src.manim_viz.scenes
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,192 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.manim_viz.mappers_graph &mdash; Algorithm Visualizer  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Algorithm Visualizer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Algorithm Visualizer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">src.manim_viz.mappers_graph</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.manim_viz.mappers_graph</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">manim</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.core.events</span><span class="w"> </span><span class="kn">import</span> <span class="n">AlgorithmEvent</span><span class="p">,</span> <span class="n">EventType</span>
+
+
+<div class="viewcode-block" id="GraphAnimationMapper">
+<a class="viewcode-back" href="../../../src.manim_viz.html#src.manim_viz.mappers_graph.GraphAnimationMapper">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GraphAnimationMapper</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Интерфейс для функций анимации графов.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">AlgorithmEvent</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Animation</span><span class="p">:</span> <span class="o">...</span></div>
+
+
+
+<div class="viewcode-block" id="map_update">
+<a class="viewcode-back" href="../../../src.manim_viz.html#src.manim_viz.mappers_graph.map_update">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_update</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">AlgorithmEvent</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Animation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Обновляет текстовые метки узлов (дистанции в графах).&quot;&quot;&quot;</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">labels</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">event</span><span class="o">.</span><span class="n">indices</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Wait</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+    <span class="n">animations</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">indices</span><span class="p">:</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">txt</span> <span class="o">=</span> <span class="s2">&quot;∞&quot;</span> <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">new_text</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">YELLOW</span><span class="p">)</span>
+            <span class="n">new_text</span><span class="o">.</span><span class="n">move_to</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">get_center</span><span class="p">())</span>
+
+            <span class="n">scene</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">labels</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_text</span>
+            <span class="n">animations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FadeIn</span><span class="p">(</span><span class="n">new_text</span><span class="p">,</span> <span class="n">run_time</span><span class="o">=</span><span class="mf">0.2</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">Animation</span><span class="p">,</span> <span class="n">AnimationGroup</span><span class="p">(</span><span class="o">*</span><span class="n">animations</span><span class="p">,</span> <span class="n">lag_ratio</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="k">if</span> <span class="n">animations</span> <span class="k">else</span> <span class="n">Wait</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="map_relax">
+<a class="viewcode-back" href="../../../src.manim_viz.html#src.manim_viz.mappers_graph.map_relax">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_relax</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">AlgorithmEvent</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Animation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Вспышка ребра при релаксации (Dijkstra/Bellman-Ford).&quot;&quot;&quot;</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span> <span class="s2">&quot;edges&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">edges</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">indices</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Wait</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+    <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">event</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">edge</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span> <span class="ow">or</span> <span class="n">edges</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">Animation</span><span class="p">,</span> <span class="n">Flash</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">ORANGE</span><span class="p">,</span> <span class="n">run_time</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">flash_radius</span><span class="o">=</span><span class="mf">0.6</span><span class="p">))</span> <span class="k">if</span> <span class="n">edge</span> <span class="k">else</span> <span class="n">Wait</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="map_visit">
+<a class="viewcode-back" href="../../../src.manim_viz.html#src.manim_viz.mappers_graph.map_visit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_visit</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">AlgorithmEvent</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Animation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Помечает узлы или элементы как посещённые.&quot;&quot;&quot;</span>
+    <span class="n">animations</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;elements&quot;</span><span class="p">,</span> <span class="s2">&quot;nodes&quot;</span><span class="p">]:</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">coll</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">indices</span><span class="p">:</span>
+                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">coll</span><span class="p">):</span>
+                    <span class="n">animations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coll</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">animate</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">BLUE</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">Animation</span><span class="p">,</span> <span class="n">AnimationGroup</span><span class="p">(</span><span class="o">*</span><span class="n">animations</span><span class="p">,</span> <span class="n">lag_ratio</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="k">if</span> <span class="n">animations</span> <span class="k">else</span> <span class="n">Wait</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="map_state_change">
+<a class="viewcode-back" href="../../../src.manim_viz.html#src.manim_viz.mappers_graph.map_state_change">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_state_change</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">AlgorithmEvent</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Animation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Обновление статус-бара внизу экрана.&quot;&quot;&quot;</span>
+    <span class="n">status_label</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span> <span class="s2">&quot;status_label&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">status_label</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">event</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Wait</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+    <span class="n">new_text</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">description</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">26</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">WHITE</span><span class="p">)</span>
+    <span class="n">new_text</span><span class="o">.</span><span class="n">move_to</span><span class="p">(</span><span class="n">status_label</span><span class="o">.</span><span class="n">get_center</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">Transform</span><span class="p">(</span><span class="n">status_label</span><span class="p">,</span> <span class="n">new_text</span><span class="p">,</span> <span class="n">run_time</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span></div>
+
+
+
+<span class="n">EVENT_TO_ANIMATION_GRAPH</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">EventType</span><span class="p">,</span> <span class="n">GraphAnimationMapper</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">UPDATE</span><span class="p">:</span> <span class="n">cast</span><span class="p">(</span><span class="n">GraphAnimationMapper</span><span class="p">,</span> <span class="n">map_update</span><span class="p">),</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">VISIT</span><span class="p">:</span> <span class="n">cast</span><span class="p">(</span><span class="n">GraphAnimationMapper</span><span class="p">,</span> <span class="n">map_visit</span><span class="p">),</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">RELAX</span><span class="p">:</span> <span class="n">cast</span><span class="p">(</span><span class="n">GraphAnimationMapper</span><span class="p">,</span> <span class="n">map_relax</span><span class="p">),</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">HEURISTIC</span><span class="p">:</span> <span class="n">cast</span><span class="p">(</span><span class="n">GraphAnimationMapper</span><span class="p">,</span> <span class="n">map_update</span><span class="p">),</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">STATE_CHANGE</span><span class="p">:</span> <span class="n">cast</span><span class="p">(</span><span class="n">GraphAnimationMapper</span><span class="p">,</span> <span class="n">map_state_change</span><span class="p">),</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">PARTITION</span><span class="p">:</span> <span class="n">cast</span><span class="p">(</span><span class="n">GraphAnimationMapper</span><span class="p">,</span> <span class="n">map_state_change</span><span class="p">),</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">MERGE</span><span class="p">:</span> <span class="n">cast</span><span class="p">(</span><span class="n">GraphAnimationMapper</span><span class="p">,</span> <span class="n">map_state_change</span><span class="p">),</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">SPLIT</span><span class="p">:</span> <span class="n">cast</span><span class="p">(</span><span class="n">GraphAnimationMapper</span><span class="p">,</span> <span class="n">map_state_change</span><span class="p">),</span>
+<span class="p">}</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Lev.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
