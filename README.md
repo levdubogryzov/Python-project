@@ -51,42 +51,37 @@
 
 ```text
 Python-project/
-├── data/                       # Хранилище записанных сценариев (.json)
-│   ├── dijkstra_events.json
-│   ├── quick_events.json
-│   └── ... (остальные логи)
-├── media/                      # Готовые видео (рендеринг Manim)
-├── src/
-│   ├── algorithms/             # Чистая логика алгоритмов
-│   │   ├── graph/
-│   │   │   ├── a_star.py
-│   │   │   ├── bellman_ford.py
-│   │   │   └── dijkstra.py
-│   │   ├── sorting/
-│   │   │   ├── merge.py
-│   │   │   ├── quick.py
-│   │   │   └── shell.py
-│   │   └── base.py             # Абстрактный класс BaseAlgorithm
-│   ├── core/                   # Фундамент системы
-│   │   ├── events.py           # Модели AlgorithmEvent и EventType
-│   │   └── exceptions.py       # Кастомные ошибки (AlgorithmError и др.)
-│   ├── manim_viz/              # Визуальный движок
-│   │   ├── scenes/
-│   │   │   ├── graph.py        # Сцена GraphScene со стрелками
-│   │   │   └── sorting.py      # Сцена SortingScene со столбцами
-│   │   ├── base_scene.py       # Базовая логика рендеринга
-│   │   ├── mappers_graph.py    # Анимации для графов
-│   │   └── mappers_sorting.py  # Анимации для сортировок
-│   ├── pipeline/               # Связующее звено (I/O)
-│   │   ├── player.py           # Загрузка и проигрывание событий
-│   │   ├── recorder.py         # Запись генератора в файл
-│   │   └── schemas.py          # Pydantic модели (EventRecord)
-│   └── validation/             # Проверка корректности
-│       └── validator.py        # Сверка результатов и хода алгоритма
-├── config.py                   # Глобальный конфиг ProjectConfig
-├── main.py                     # CLI-интерфейс на Rich
-├── requirements.txt            # Зависимости (manim, pydantic, rich)
-└── .gitignore                  # Игнорирование кэша и медиа
+├── data/                       # Записи событий алгоритмов в формате JSON
+├── media/                      # Сгенерированные видеоролики визуализаций
+├── profiling/                  # Модуль профилирования производительности
+│   ├── profiling.py            # Скрипт для замера CPU и RAM
+│   ├── REPORT.md               # Итоговый аналитический отчет
+│   └── profiling_result.md     # Сырые данные замеров
+├── src/                        # Исходный код приложения
+│   ├── algorithms/             # Логика алгоритмов
+│   │   ├── graph/              # A*, Bellman-Ford, Dijkstra
+│   │   ├── sorting/            # Merge, Quick, Shell
+│   │   └── base.py             # Базовый абстрактный класс
+│   ├── core/                   # Ядро: события и исключения
+│   ├── manim_viz/              # Визуальный движок (Manim)
+│   │   ├── scenes/             # Сцены для графов и сортировок
+│   │   ├── base_scene.py       # Базовая сцена рендеринга
+│   │   ├── mappers_graph.py    # Маппинг событий графов
+│   │   └── mappers_sorting.py  # Маппинг событий сортировок
+│   ├── pipeline/               # Пайплайн обработки данных (I/O)
+│   │   ├── player.py           # Проигрывание событий
+│   │   ├── recorder.py         # Запись событий
+│   │   └── schemas.py          # Pydantic модели
+│   └── validation/             # Модуль верификации результатов
+│       └── validator.py        # Валидатор логики и итогов
+├── test/                       # Автоматизированные тесты (pytest)
+│   ├── __init__.py
+│   └── test_project.py         # Тесты алгоритмов и пайплайна
+├── config.py                   # Глобальные настройки проекта
+├── main.py                     # CLI-интерфейс (Rich)
+├── README.md                   # Документация проекта
+├── requirements.txt            # Зависимости проекта
+└── .gitignore                  # Конфигурация игнорирования Git
 Запуск проекта
 
 Создайте виртуальное окружение: python -m venv venv

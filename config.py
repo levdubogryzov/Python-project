@@ -15,7 +15,7 @@ class ProjectConfig:
     manim_config.tex_dir = str(MEDIA_DIR)
     manim_config.images_dir = str(MEDIA_DIR)
     manim_config.log_dir = str(MEDIA_DIR)
-    DEFAULT_SORTING_ARRAY: list[int] = [64, 34, 25, 12, 22, 11, 90]
+    DEFAULT_SORTING_ARRAY: list[int] = [45, 87, 2, 7, 96, 23, 7, 1, 0]
     DEFAULT_GRAPH: list[list[tuple[int, float]]] = [
         [(1, 2), (3, 100)],
         [(2, 1), (3, 1)],
