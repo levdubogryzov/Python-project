@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: dev
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -29,7 +31,6 @@ jobs:
 
       - name: Build Docs
         run: |
-          # Создаем структуру, если ее вдруг нет
           mkdir -p docs/source
           sphinx-apidoc -o docs/source/ src/
           sphinx-build docs/source/ docs/build/html
