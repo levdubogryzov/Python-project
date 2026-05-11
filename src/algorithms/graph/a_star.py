@@ -6,6 +6,7 @@ from src.core.exceptions import InvalidInputError
 
 
 class AStar(BaseAlgorithm):
+    """Алгоритм A* для поиска кратчайшего пути с использованием эвристической функции."""
     def __init__(
             self,
             graph: List[List[Tuple[int, float]]],
@@ -13,75 +14,74 @@ class AStar(BaseAlgorithm):
             end: Optional[int] = None,
             heuristic: Optional[Callable[[int, int], float]] = None,
     ) -> None:
-        vertices = list(range(len(graph)))
-        super().__init__(vertices)
-
+        super().__init__(list(range(len(graph))))
         self._graph = graph
         self._start = start
         self._end = end if end is not None else len(graph) - 1
-        self._heuristic = heuristic or (lambda x, y: 0)
-        self._distances: Dict[int, float] = {}
+        self._heuristic = heuristic or (lambda x, y: 0.0)
+        self._distances: Dict[int, float] = {i: float('inf') for i in range(len(graph))}
         self._validate_astar_input()
 
     def _validate_astar_input(self) -> None:
+        """Проверяет корректность графа, начальной и конечной точек."""
         if not self._graph:
-            raise InvalidInputError("Граф пуст")
+            raise InvalidInputError("Граф пуст.")
         n = len(self._graph)
-        if self._start < 0 or self._start >= n:
-            raise InvalidInputError(f"Вершина {self._start} вне диапазона")
-        if self._end < 0 or self._end >= n:
-            raise InvalidInputError(f"Вершина {self._end} вне диапазона")
-
+        if not (0 <= self._start < n) or not (0 <= self._end < n):
+            raise InvalidInputError("Начальная или конечная вершина вне диапазона.")
         for u, neighbors in enumerate(self._graph):
             for v, weight in neighbors:
                 if weight < 0:
-                    raise InvalidInputError(f"Отрицательный вес ребра {u}->{v}. Используйте Bellman-Ford.")
-                if v < 0 or v >= n:
-                    raise InvalidInputError(f"Некорректная вершина {v}")
+                    raise InvalidInputError(f"Отрицательный вес {weight} у ребра {u}->{v}.")
 
     @property
     def distances(self) -> Dict[int, float]:
         return self._distances.copy()
 
     def run(self) -> Generator[AlgorithmEvent, None, None]:
+        """Выполняет поиск пути, генерируя события обновления стоимостей и посещения узлов."""
         n = len(self._graph)
         self._distances = {i: float('inf') for i in range(n)}
-        self._distances[self._start] = 0
 
-        g_score: Dict[int, float] = {self._start: 0}
+        for node_idx, dist in self._distances.items():
+            yield self._emit(
+                event_type=EventType.UPDATE,
+                indices=[node_idx],
+                value=dist,
+                description=f"Инициализация: {node_idx}"
+            )
+
+        g_score: Dict[int, float] = {self._start: 0.0}
         visited: Set[int] = set()
-        pq: List[Tuple[float, int]] = [(0, self._start)]
+        pq: List[Tuple[float, int]] = [(0.0, self._start)]
 
         yield self._emit(
-            EventType.VISIT,
-            [self._start],
-            value=0,
-            description=f"Старт из вершины {self._start}",
+            event_type=EventType.VISIT,
+            indices=[self._start],
+            value=0.0,
+            description=f"Старт поиска из вершины {self._start}"
         )
 
         while pq:
             f, u = heapq.heappop(pq)
-
             if u in visited:
                 continue
 
             visited.add(u)
             self._distances[u] = g_score[u]
 
-            h = self._heuristic(u, self._end)
             yield self._emit(
-                EventType.HEURISTIC,
-                [u],
-                value=h,
-                description=f"Эвристика h({u}) = {h}",
+                event_type=EventType.UPDATE,
+                indices=[u],
+                value=g_score[u],
+                description=f"Посещена вершина {u}, g={g_score[u]}"
             )
 
             if u == self._end:
                 yield self._emit(
-                    EventType.FOUND,
-                    [u],
-                    value=self._distances[u],
-                    description=f"Цель достигнута: вершина {self._end}",
+                    event_type=EventType.STATE_CHANGE,
+                    indices=[u],
+                    description=f"Путь найден! Дистанция: {self._distances[u]}"
                 )
                 break
 
@@ -90,21 +90,20 @@ class AStar(BaseAlgorithm):
                     continue
 
                 yield self._emit(
-                    EventType.COMPARE,
-                    [u, v],
+                    event_type=EventType.RELAX,
+                    indices=[u, v],
                     value=weight,
-                    description=f"Ребро {u}->{v}, вес {weight}",
+                    description=f"Проверка ребра {u} -> {v}"
                 )
 
                 new_g = g_score[u] + weight
                 if new_g < g_score.get(v, float('inf')):
                     g_score[v] = new_g
                     f_score = new_g + self._heuristic(v, self._end)
-
                     yield self._emit(
-                        EventType.RELAX,
-                        [u, v],
+                        event_type=EventType.UPDATE,
+                        indices=[v],
                         value=new_g,
-                        description=f"Релаксация {u}->{v}: g={new_g}",
+                        description=f"Новый путь до {v}: {new_g}"
                     )
                     heapq.heappush(pq, (f_score, v))

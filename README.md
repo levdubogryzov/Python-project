@@ -51,49 +51,37 @@
 
 ```text
 Python-project/
-├── src/
+├── data/                       # Записи событий алгоритмов в формате JSON
+├── media/                      # Сгенерированные видеоролики визуализаций
+├── profiling/                  # Модуль профилирования производительности
+│   ├── profiling.py            # Скрипт для замера CPU и RAM
+│   ├── REPORT.md               # Итоговый аналитический отчет
+│   └── profiling_result.md     # Сырые данные замеров
+├── src/                        # Исходный код приложения
+│   ├── algorithms/             # Логика алгоритмов
+│   │   ├── graph/              # A*, Bellman-Ford, Dijkstra
+│   │   ├── sorting/            # Merge, Quick, Shell
+│   │   └── base.py             # Базовый абстрактный класс
+│   ├── core/                   # Ядро: события и исключения
+│   ├── manim_viz/              # Визуальный движок (Manim)
+│   │   ├── scenes/             # Сцены для графов и сортировок
+│   │   ├── base_scene.py       # Базовая сцена рендеринга
+│   │   ├── mappers_graph.py    # Маппинг событий графов
+│   │   └── mappers_sorting.py  # Маппинг событий сортировок
+│   ├── pipeline/               # Пайплайн обработки данных (I/O)
+│   │   ├── player.py           # Проигрывание событий
+│   │   ├── recorder.py         # Запись событий
+│   │   └── schemas.py          # Pydantic модели
+│   └── validation/             # Модуль верификации результатов
+│       └── validator.py        # Валидатор логики и итогов
+├── test/                       # Автоматизированные тесты (pytest)
 │   ├── __init__.py
-│   ├── core/                          # Базовая инфраструктура событий
-│   │   ├── __init__.py
-│   │   ├── events.py                  # EventType (Enum), AlgorithmEvent (dataclass), типы сигналов
-│   │   ├── exceptions.py              # Кастомные ошибки (InvalidStep, ValidationError, ReplayError)
-│   │   ── base.py                    # AbstractAlgorithm: обёртка-генератор, единый интерфейс yield
-│   ├── algorithms/                    # Реализация алгоритмов (чистая логика)
-│   │   ├── __init__.py
-│   │   ├── sorting/
-│   │   │   ├── __init__.py
-│   │   │   ├── shell.py               # Сортировка Шелла → yield COMPARE/SWAP
-│   │   │   ├── quick.py               # Быстрая сортировка → yield COMPARE/SWAP/PARTITION
-│   │   │   └── merge.py               # Слияние → yield COMPARE/MERGE/SPLIT
-│   │   └── graph/
-│   │       ├── __init__.py
-│   │       ├── dijkstra.py            # Дейкстра → yield VISIT/UPDATE/RELAX
-│   │       ├── astar.py               # A* → yield VISIT/UPDATE/HEURISTIC
-│   │       └── bellman_ford.py        # Беллман-Форд → yield RELAX/NEGATIVE_CYCLE
-│   ├── validation/                    # Проверка корректности потока событий
-│   │   ├── __init__.py
-│   │   └── validator.py               # Сверяет события с эталонным состоянием, кидает ошибки при рассинхроне
-│   ├── pipeline/                      # 🔹 Прослойка «Запись ↔ Воспроизведение» (Итерация 2)
-│   │   ├── __init__.py
-│   │   ├── recorder.py                # Запускает алгоритм, перехватывает yield, сохраняет в JSON
-│   │   ├── player.py                  # Читает JSON, эмитирует события пошагово с контролем таймингов/пауз
-│   │   └── schemas.py                 # Pydantic-модели для сериализации/десериализации Event → JSON
-│   ├── manim_viz/                     # 🔹 Визуальный движок (Итерация 2)
-│   │   ├── __init__.py
-│   │   ├── base_scene.py              # Базовая Manim.Scene: камера, стили, масштабирование, экспорт FFmpeg
-│   │   ├── mappers.py                 # Словарь функций: Event.type → Manim.Animation (пульсация, перемещение, текст)
-│   │   └── scenes/
-│   │       ├── __init__.py
-│   │       ├── sorting.py             # Готовые сцены для Shell/Quick/Merge
-│   │       └── graph.py               # Готовые сцены для Dijkstra/A*/Bellman-Ford
-│   ├── config.py                      # Глобальные настройки: пути к data/, качество рендера, дефолтные параметры алгоритмов
-│   └── main.py                        # Точка входа с красивым консольным выводом
-├── data/                              # Рантайм-хранилище сценариев (в .gitignore)
-│   ├── recorded/                      # Сырые JSON-логи от recorder.py
-│   └── optimized/                     # Предобработанные логи для рендера (с таймингами, кэшем позиций)
-├── .gitignore                         # data/, media/, __pycache__/, venv/, *.pyc, .DS_Store
-├── requirements.txt                   # manim=0.18.0, pydantic, numpy, typer (CLI), pytest (опционально)
-└── README.md                          # Документация, структура, запуск, этапы
+│   └── test_project.py         # Тесты алгоритмов и пайплайна
+├── config.py                   # Глобальные настройки проекта
+├── main.py                     # CLI-интерфейс (Rich)
+├── README.md                   # Документация проекта
+├── requirements.txt            # Зависимости проекта
+└── .gitignore                  # Конфигурация игнорирования Git
 Запуск проекта
 
 Создайте виртуальное окружение: python -m venv venv

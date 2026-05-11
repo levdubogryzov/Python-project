@@ -6,49 +6,52 @@ from src.core.exceptions import InvalidInputError
 
 
 class Dijkstra(BaseAlgorithm):
-    def __init__(
-            self,
-            graph: List[List[Tuple[int, float]]],
-            start: int = 0,
-    ) -> None:
-        vertices = list(range(len(graph)))
-        super().__init__(vertices)
+    """Алгоритм Дейкстры для поиска кратчайших путей с генерацией событий визуализации."""
 
+    def __init__(self, graph: List[List[Tuple[int, float]]], start: int = 0) -> None:
+        """Инициализирует граф, начальную вершину и валидирует входные данные."""
+        super().__init__(list(range(len(graph))))
         self._graph = graph
         self._start = start
-        self._distances: Dict[int, float] = {}
+        self._distances: Dict[int, float] = {i: float('inf') for i in range(len(graph))}
         self._validate_dijkstra_input()
 
     def _validate_dijkstra_input(self) -> None:
+        """Проверяет граф на отсутствие отрицательных весов и корректность индексов."""
         if not self._graph:
-            raise InvalidInputError("Граф пуст")
+            raise InvalidInputError("Граф пуст.")
         n = len(self._graph)
-        if self._start < 0 or self._start >= n:
-            raise InvalidInputError(f"Вершина {self._start} вне диапазона")
+        if not (0 <= self._start < n):
+            raise InvalidInputError(f"Вершина {self._start} вне диапазона.")
+
         for u, neighbors in enumerate(self._graph):
             for v, weight in neighbors:
                 if weight < 0:
-                    raise InvalidInputError(f"Отрицательный вес ребра {u}->{v}. Используйте Bellman-Ford.")
-                if v < 0 or v >= n:
-                    raise InvalidInputError(f"Некорректная вершина {v}")
+                    raise InvalidInputError(f"Отрицательный вес ребра {u}->{v}.")
+                if not (0 <= v < n):
+                    raise InvalidInputError(f"Некорректная вершина {v}.")
 
     @property
     def distances(self) -> Dict[int, float]:
+        """Возвращает копию текущего словаря кратчайших расстояний."""
         return self._distances.copy()
 
     def run(self) -> Generator[AlgorithmEvent, None, None]:
+        """Выполняет расчет путей, пошагово генерируя события посещения и релаксации."""
         n = len(self._graph)
         self._distances = {i: float('inf') for i in range(n)}
-        self._distances[self._start] = 0
-        visited: Set[int] = set()
-        pq: List[Tuple[float, int]] = [(0, self._start)]
+        self._distances[self._start] = 0.0
 
-        yield self._emit(
-            EventType.VISIT,
-            [self._start],
-            value=0,
-            description=f"Старт из вершины {self._start}",
-        )
+        for node_idx, dist in self._distances.items():
+            yield self._emit(
+                event_type=EventType.UPDATE,
+                indices=[node_idx],
+                value=dist,
+                description=f"Инициализация: {node_idx}"
+            )
+
+        visited: Set[int] = set()
+        pq: List[Tuple[float, int]] = [(0.0, self._start)]
 
         while pq:
             dist, u = heapq.heappop(pq)
@@ -57,20 +60,19 @@ class Dijkstra(BaseAlgorithm):
                 continue
 
             visited.add(u)
-
             yield self._emit(
-                EventType.VISIT,
-                [u],
+                event_type=EventType.VISIT,
+                indices=[u],
                 value=dist,
-                description=f"Посещена вершина {u}, расстояние {dist}",
+                description=f"Посещена вершина {u}, путь: {dist}"
             )
 
             for v, weight in self._graph[u]:
                 yield self._emit(
-                    EventType.COMPARE,
-                    [u, v],
+                    event_type=EventType.RELAX,
+                    indices=[u, v],
                     value=weight,
-                    description=f"Ребро {u}->{v}, вес {weight}",
+                    description=f"Проверка ребра {u} -> {v}"
                 )
 
                 if v not in visited:
@@ -78,9 +80,9 @@ class Dijkstra(BaseAlgorithm):
                     if new_dist < self._distances[v]:
                         self._distances[v] = new_dist
                         yield self._emit(
-                            EventType.RELAX,
-                            [u, v],
+                            event_type=EventType.UPDATE,
+                            indices=[v],
                             value=new_dist,
-                            description=f"Релаксация {u}->{v}: {new_dist}",
+                            description=f"Обновлено расстояние до {v}: {new_dist}"
                         )
                         heapq.heappush(pq, (new_dist, v))

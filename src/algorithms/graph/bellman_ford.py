@@ -5,85 +5,74 @@ from src.core.exceptions import InvalidInputError, NegativeCycleError
 
 
 class BellmanFord(BaseAlgorithm):
-    def __init__(
-            self,
-            graph: List[List[Tuple[int, float]]],
-            start: int = 0,
-    ) -> None:
-        vertices = list(range(len(graph)))
-        super().__init__(vertices)
-
+    """Алгоритм Беллмана-Форда для поиска кратчайших путей с детектированием отрицательных циклов."""
+    def __init__(self, graph: List[List[Tuple[int, float]]], start: int = 0) -> None:
+        super().__init__(list(range(len(graph))))
         self._graph = graph
         self._start = start
-        self._distances: Dict[int, float] = {}
+        self._distances: Dict[int, float] = {i: float('inf') for i in range(len(graph))}
         self._has_negative_cycle = False
         self._validate_bellman_input()
 
     def _validate_bellman_input(self) -> None:
+        """Проверяет входной граф на пустоту и корректность стартовой вершины."""
         if not self._graph:
-            raise InvalidInputError("Граф пуст")
-        n = len(self._graph)
-        if self._start < 0 or self._start >= n:
-            raise InvalidInputError(f"Вершина {self._start} вне диапазона")
+            raise InvalidInputError("Граф пуст.")
+        if not (0 <= self._start < len(self._graph)):
+            raise InvalidInputError(f"Вершина {self._start} вне диапазона.")
 
     @property
     def distances(self) -> Dict[int, float]:
         return self._distances.copy()
 
-    @property
-    def has_negative_cycle(self) -> bool:
-        return self._has_negative_cycle
-
     def run(self) -> Generator[AlgorithmEvent, None, None]:
+        """Запускает итерационный процесс релаксации ребер и поиска отрицательных циклов."""
         n = len(self._graph)
         self._distances = {i: float('inf') for i in range(n)}
-        self._distances[self._start] = 0
+        self._distances[self._start] = 0.0
+
+        for node_idx, dist in self._distances.items():
+            yield self._emit(
+                event_type=EventType.UPDATE,
+                indices=[node_idx],
+                value=dist,
+                description=f"Инициализация: {node_idx} = {dist}"
+            )
 
         edges: List[Tuple[int, int, float]] = []
         for u, neighbors in enumerate(self._graph):
             for v, weight in neighbors:
                 edges.append((u, v, weight))
 
-        yield self._emit(
-            EventType.VISIT,
-            [self._start],
-            value=0,
-            description=f"Старт из вершины {self._start}",
-        )
-
         for i in range(n - 1):
-            updated = False
+            any_update = False
             for u, v, weight in edges:
                 yield self._emit(
-                    EventType.RELAX,
-                    [u, v],
+                    event_type=EventType.RELAX,
+                    indices=[u, v],
                     value=weight,
-                    description=f"Итерация {i + 1}: ребро {u} -> {v}",
+                    description=f"Итерация {i + 1}: проверка ребра {u} -> {v}"
                 )
 
                 if self._distances[u] != float('inf'):
                     new_dist = self._distances[u] + weight
                     if new_dist < self._distances[v]:
                         self._distances[v] = new_dist
-                        updated = True
-
-            if not updated:
-                yield self._emit(
-                    EventType.STATE_CHANGE,
-                    [],
-                    value=i,
-                    description=f"Ранняя остановка на итерации {i + 1}",
-                )
+                        any_update = True
+                        yield self._emit(
+                            event_type=EventType.UPDATE,
+                            indices=[v],
+                            value=self._distances[v],
+                            description=f"Обновлено расстояние до {v}: {new_dist}"
+                        )
+            if not any_update:
                 break
 
         for u, v, weight in edges:
-            if self._distances[u] != float('inf'):
-                if self._distances[u] + weight < self._distances[v]:
-                    self._has_negative_cycle = True
-                    yield self._emit(
-                        EventType.NEGATIVE_CYCLE,
-                        [u, v],
-                        value=weight,
-                        description=f"Отрицательный цикл: {u} -> {v}",
-                    )
-                    raise NegativeCycleError("Обнаружен отрицательный цикл")
+            if self._distances[u] != float('inf') and self._distances[u] + weight < self._distances[v]:
+                yield self._emit(
+                    event_type=EventType.NEGATIVE_CYCLE,
+                    indices=[u, v],
+                    description="Найден отрицательный цикл!"
+                )
+                raise NegativeCycleError("Граф содержит отрицательный цикл")
