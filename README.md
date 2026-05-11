@@ -50,50 +50,50 @@
 ## Структура проекта
 
 ```text
+# Algorithm Visualizer Core | Iteration 2
+
+Проект представляет собой модульную систему для визуализации алгоритмов сортировки и поиска на графах. Архитектура разделена на слои: ядро событий, алгоритмы, валидация, пайплайн записи/воспроизведения и визуальный движок на базе Manim.
+
+## 📁 Структура проекта
+
+```text
 Python-project/
+├── data/                       # Хранилище записанных сценариев (.json)
+│   ├── dijkstra_events.json
+│   ├── quick_events.json
+│   └── ... (остальные логи)
+├── media/                      # Готовые видео (рендеринг Manim)
 ├── src/
-│   ├── __init__.py
-│   ├── core/                          # Базовая инфраструктура событий
-│   │   ├── __init__.py
-│   │   ├── events.py                  # EventType (Enum), AlgorithmEvent (dataclass), типы сигналов
-│   │   ├── exceptions.py              # Кастомные ошибки (InvalidStep, ValidationError, ReplayError)
-│   │   ── base.py                    # AbstractAlgorithm: обёртка-генератор, единый интерфейс yield
-│   ├── algorithms/                    # Реализация алгоритмов (чистая логика)
-│   │   ├── __init__.py
+│   ├── algorithms/             # Чистая логика алгоритмов
+│   │   ├── graph/
+│   │   │   ├── a_star.py
+│   │   │   ├── bellman_ford.py
+│   │   │   └── dijkstra.py
 │   │   ├── sorting/
-│   │   │   ├── __init__.py
-│   │   │   ├── shell.py               # Сортировка Шелла → yield COMPARE/SWAP
-│   │   │   ├── quick.py               # Быстрая сортировка → yield COMPARE/SWAP/PARTITION
-│   │   │   └── merge.py               # Слияние → yield COMPARE/MERGE/SPLIT
-│   │   └── graph/
-│   │       ├── __init__.py
-│   │       ├── dijkstra.py            # Дейкстра → yield VISIT/UPDATE/RELAX
-│   │       ├── astar.py               # A* → yield VISIT/UPDATE/HEURISTIC
-│   │       └── bellman_ford.py        # Беллман-Форд → yield RELAX/NEGATIVE_CYCLE
-│   ├── validation/                    # Проверка корректности потока событий
-│   │   ├── __init__.py
-│   │   └── validator.py               # Сверяет события с эталонным состоянием, кидает ошибки при рассинхроне
-│   ├── pipeline/                      # 🔹 Прослойка «Запись ↔ Воспроизведение» (Итерация 2)
-│   │   ├── __init__.py
-│   │   ├── recorder.py                # Запускает алгоритм, перехватывает yield, сохраняет в JSON
-│   │   ├── player.py                  # Читает JSON, эмитирует события пошагово с контролем таймингов/пауз
-│   │   └── schemas.py                 # Pydantic-модели для сериализации/десериализации Event → JSON
-│   ├── manim_viz/                     # 🔹 Визуальный движок (Итерация 2)
-│   │   ├── __init__.py
-│   │   ├── base_scene.py              # Базовая Manim.Scene: камера, стили, масштабирование, экспорт FFmpeg
-│   │   ├── mappers.py                 # Словарь функций: Event.type → Manim.Animation (пульсация, перемещение, текст)
-│   │   └── scenes/
-│   │       ├── __init__.py
-│   │       ├── sorting.py             # Готовые сцены для Shell/Quick/Merge
-│   │       └── graph.py               # Готовые сцены для Dijkstra/A*/Bellman-Ford
-│   ├── config.py                      # Глобальные настройки: пути к data/, качество рендера, дефолтные параметры алгоритмов
-│   └── main.py                        # Точка входа с красивым консольным выводом
-├── data/                              # Рантайм-хранилище сценариев (в .gitignore)
-│   ├── recorded/                      # Сырые JSON-логи от recorder.py
-│   └── optimized/                     # Предобработанные логи для рендера (с таймингами, кэшем позиций)
-├── .gitignore                         # data/, media/, __pycache__/, venv/, *.pyc, .DS_Store
-├── requirements.txt                   # manim=0.18.0, pydantic, numpy, typer (CLI), pytest (опционально)
-└── README.md                          # Документация, структура, запуск, этапы
+│   │   │   ├── merge.py
+│   │   │   ├── quick.py
+│   │   │   └── shell.py
+│   │   └── base.py             # Абстрактный класс BaseAlgorithm
+│   ├── core/                   # Фундамент системы
+│   │   ├── events.py           # Модели AlgorithmEvent и EventType
+│   │   └── exceptions.py       # Кастомные ошибки (AlgorithmError и др.)
+│   ├── manim_viz/              # Визуальный движок
+│   │   ├── scenes/
+│   │   │   ├── graph.py        # Сцена GraphScene со стрелками
+│   │   │   └── sorting.py      # Сцена SortingScene со столбцами
+│   │   ├── base_scene.py       # Базовая логика рендеринга
+│   │   ├── mappers_graph.py    # Анимации для графов
+│   │   └── mappers_sorting.py  # Анимации для сортировок
+│   ├── pipeline/               # Связующее звено (I/O)
+│   │   ├── player.py           # Загрузка и проигрывание событий
+│   │   ├── recorder.py         # Запись генератора в файл
+│   │   └── schemas.py          # Pydantic модели (EventRecord)
+│   └── validation/             # Проверка корректности
+│       └── validator.py        # Сверка результатов и хода алгоритма
+├── config.py                   # Глобальный конфиг ProjectConfig
+├── main.py                     # CLI-интерфейс на Rich
+├── requirements.txt            # Зависимости (manim, pydantic, rich)
+└── .gitignore                  # Игнорирование кэша и медиа
 Запуск проекта
 
 Создайте виртуальное окружение: python -m venv venv
